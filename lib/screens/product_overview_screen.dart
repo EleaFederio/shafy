@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopy/providers/Products.dart';
+import 'package:shopy/providers/cart.dart';
+import 'package:shopy/widgets/badge.dart';
 import 'package:shopy/widgets/products_grid.dart';
 
 enum FilterOptions {
@@ -15,23 +17,29 @@ class ProductOverviewScreen extends StatefulWidget {
 }
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
+  bool _showOnlyFavoritesData = false;
   @override
   Widget build(BuildContext context) {
-    var _showOnlyFavoritesData = false;
     return Scaffold(
       appBar: AppBar(
         title: Text('Gubat Online Store'),
         actions: <Widget>[
+          Consumer<Cart>(
+            builder: (_, cartData, ch) => Badge(
+                child: ch,
+                value: cartData.itemCount.toString()),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: (){},
+            ),
+          ),
           PopupMenuButton(
             onSelected: (FilterOptions selectedValue){
-              setState((){
-                switch(selectedValue){
-                  case FilterOptions.All:
-                    _showOnlyFavoritesData = false;
-                    break;
-                  case FilterOptions.Favorites:
-                    _showOnlyFavoritesData = true;
-                    break;
+              setState(() {
+                if(selectedValue == FilterOptions.Favorites){
+                  _showOnlyFavoritesData = true;
+                } else{
+                  _showOnlyFavoritesData = false;
                 }
               });
             },
