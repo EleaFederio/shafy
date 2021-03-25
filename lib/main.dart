@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopy/config/myColor.dart';
 import 'package:shopy/providers/Products.dart';
 import 'package:shopy/providers/cart.dart';
+import 'package:shopy/screens/cart_screen.dart';
 import 'package:shopy/screens/product_detail_screen.dart';
 import 'package:shopy/screens/product_overview_screen.dart';
 
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
           ),
           home: ProductOverviewScreen(),
           routes: {
-            ProductDetailScreen.routeName: (context) => ProductDetailScreen()
+            ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
+            CartScreen.routeName: (context) => CartScreen()
           },
         ),
     );

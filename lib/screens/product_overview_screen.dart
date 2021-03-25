@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopy/providers/Products.dart';
 import 'package:shopy/providers/cart.dart';
+import 'package:shopy/screens/cart_screen.dart';
 import 'package:shopy/widgets/badge.dart';
 import 'package:shopy/widgets/products_grid.dart';
 
@@ -30,7 +31,9 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                 value: cartData.itemCount.toString()),
             child: IconButton(
               icon: Icon(Icons.shopping_cart),
-              onPressed: (){},
+              onPressed: (){
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
             ),
           ),
           PopupMenuButton(
