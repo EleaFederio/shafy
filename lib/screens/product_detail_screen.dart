@@ -14,6 +14,38 @@ class ProductDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(loadedProduct.title),
       ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 350,
+              width: double.infinity,
+              child: Image.network(
+                loadedProduct.imageUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 10.0,),
+            Text(
+                '₱ ${loadedProduct.price}',
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontSize: 20.0
+              ),
+            ),
+            SizedBox(height: 10.0,),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              width: double.infinity,
+              child: Text(
+                  loadedProduct.description,
+                textAlign: TextAlign.center,
+                softWrap: true,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

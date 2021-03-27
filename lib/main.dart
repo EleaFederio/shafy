@@ -3,9 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:shopy/config/myColor.dart';
 import 'package:shopy/providers/Products.dart';
 import 'package:shopy/providers/cart.dart';
+import 'package:shopy/providers/orders.dart';
 import 'package:shopy/screens/cart_screen.dart';
+import 'package:shopy/screens/edit_product_screen.dart';
+import 'package:shopy/screens/orders_screen.dart';
 import 'package:shopy/screens/product_detail_screen.dart';
 import 'package:shopy/screens/product_overview_screen.dart';
+import 'package:shopy/screens/user_products_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,6 +28,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => Cart(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => Orders(),
+        )
       ],
       child: MaterialApp(
           title: 'Flutter Demo',
@@ -36,7 +43,10 @@ class MyApp extends StatelessWidget {
           home: ProductOverviewScreen(),
           routes: {
             ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
-            CartScreen.routeName: (context) => CartScreen()
+            CartScreen.routeName: (context) => CartScreen(),
+            OrdersScreen.routeName: (context) => OrdersScreen(),
+            UserProductsScreen.routeName: (context) => UserProductsScreen(),
+            EditProductScreen.routeName: (context) => EditProductScreen()
           },
         ),
     );

@@ -29,6 +29,32 @@ class CartItemScreen extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: EdgeInsets.only(right: 20.0),
       ),
+      confirmDismiss: (direction){
+        return showDialog(
+          context: context,
+          builder: (_context) => AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('Do you want to remove the item from the cart?'),
+            actions: <Widget>[
+              FlatButton(
+              child: Text('No'),
+                onPressed: (){
+                  // showDialog will return a bool value that can be true or false
+                  //in here we set value to flase
+                  Navigator.of(_context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text('Yes'),
+                onPressed: (){
+                  Navigator.of(_context).pop(true);
+                },
+              ),
+            ],
+          )
+        );
+        // return Future.value(true);
+      },
       onDismissed: (direction){
         Provider.of<Cart>(context, listen: false).removeItem(productId);
       },

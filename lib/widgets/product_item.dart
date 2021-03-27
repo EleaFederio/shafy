@@ -49,6 +49,22 @@ class ProductItem extends StatelessWidget {
                     product.price,
                     product.title
                 );
+              //  Info puo-up
+              //  ScaffoldMessenger will be use instead of SnackBar if using Flutter 2
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${product.title} successfully added to cart'),
+                    duration: Duration(seconds: 3),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: (){
+                        cart.removedSingleItem(product.id);
+                        print('${product.title} successfully removed to cart');
+                      },
+                    ),
+                  )
+                );
               },
             ),
             backgroundColor: Colors.black54,

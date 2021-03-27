@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shopy/providers/Products.dart';
 import 'package:shopy/providers/cart.dart';
 import 'package:shopy/screens/cart_screen.dart';
+import 'package:shopy/widgets/app_drawer.dart';
 import 'package:shopy/widgets/badge.dart';
 import 'package:shopy/widgets/products_grid.dart';
 
@@ -54,6 +55,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           ),
         ],
       ),
+      drawer: AppDrawer(),
       body: ProductsGrid(_showOnlyFavoritesData),
     );
   }
