@@ -15,6 +15,7 @@ class CartItemScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<Cart>(context, listen: false);
 
     return Dismissible(
       key: ValueKey(id),
@@ -63,6 +64,7 @@ class CartItemScreen extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(8.8),
           child: ListTile(
+            // tileColor: Colors.orange,
             leading: Chip(
               label: Text(
                 '₱ ${price}',
@@ -71,7 +73,61 @@ class CartItemScreen extends StatelessWidget {
             ),
             title: Text(title),
             subtitle: Text('₱ ${(price * quantity).toStringAsFixed(2)}'),
-            trailing: Text(' ${quantity} X'),
+            trailing: Container(
+              height: 60,
+              width: 100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Quantity'),
+                  Container(
+                    height: 30,
+                    width: 100,
+                    // color: Theme.of(context).accentColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: 30,
+                          height: 20,
+                          child: RaisedButton(
+                            padding: EdgeInsets.symmetric(horizontal: 3.0),
+                            child: Icon(
+                              Icons.arrow_left,
+                            ),
+                            onPressed: (){},
+                          ),
+                        ),
+                        Container(
+                          width: 30.0,
+                          // margin: EdgeInsets.symmetric(horizontal: .0),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '${quantity}',
+                            style: TextStyle(
+                              fontSize: 15.0
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 30,
+                          height: 20,
+                          child: RaisedButton(
+                            padding: EdgeInsets.symmetric(horizontal: 3.0),
+                            child: Icon(
+                              Icons.arrow_right,
+                            ),
+                            onPressed: () => cart.addQuantity(id),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ),
       ),

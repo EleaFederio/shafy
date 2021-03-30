@@ -84,4 +84,18 @@ class Cart with ChangeNotifier{
     notifyListeners();
   }
 
+  void addQuantity(String productId){
+    // print(' +++++ ${productId} +++++ ');
+    if(_items.containsKey(productId)){
+      _items.update(productId, (existingCartItem) => CartItem(
+          id: existingCartItem.id,
+          title: existingCartItem.title,
+          price: existingCartItem.price,
+          quantity: existingCartItem.quantity + 1
+      ),);
+      print('Hello');
+    }
+    notifyListeners();
+  }
+
 }
