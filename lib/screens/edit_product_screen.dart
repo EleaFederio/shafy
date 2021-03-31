@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopy/providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
 
@@ -13,6 +14,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _descriptionFocusNode = FocusNode();
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  var _editedProduct =  Product(
+    id: null,
+    title: '',
+    price: 0,
+    description: '',
+    imageUrl: ''
+  );
 
 
   @override
@@ -34,10 +43,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void _updateImageUrl(){
   //  Check if there is focus on url formField
     if(!_imageUrlFocusNode.hasFocus){
+      if(_imageUrlController.text.isEmpty || !_imageUrlController.text.startsWith('http') || !_imageUrlController.text.startsWith('https')
+          || !_imageUrlController.text.endsWith('.jpeg') || !_imageUrlController.text.endsWith('.jpg') || !_imageUrlController.text.endsWith('.png')){
+        return;
+      }
       setState(() {
 
       });
     }
+  }
+
+  void _saveForm(){
+    final isValid = _form.currentState.validate();
+    if(!isValid){
+      return;
+    }
+    _form.currentState.save();
+    print(_editedProduct.title);
+    print(_editedProduct.price.toString());
+    print(_editedProduct.description);
+    print(_editedProduct.imageUrl);
   }
 
   @override
@@ -45,10 +70,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.save,
+              color: Colors.white,
+            ),
+            onPressed: _saveForm,
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: _form,
           child: ListView(
             children: <Widget>[
               TextFormField(
@@ -60,6 +95,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (_){
                   //Target price FocusNode
                   FocusScope.of(context).requestFocus(_priceFocusNode);
+                },
+                onSaved: (value){
+                  _editedProduct = Product(
+                    title: value,
+                    price:  _editedProduct.price,
+                    description: _editedProduct.description,
+                    imageUrl: _editedProduct.imageUrl,
+                    id: null
+                  );
+                },
+                validator: (value){
+                  // return null means no error
+                  if(value.isEmpty){
+                    return 'Please Provide a product title';
+                  }
+                  return null;
                 },
               ),
               TextFormField(
@@ -73,6 +124,28 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (_){
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                onSaved: (value){
+                  _editedProduct = Product(
+                      title: _editedProduct.title,
+                      price:  double.parse(value),
+                      description: _editedProduct.description,
+                      imageUrl: _editedProduct.imageUrl,
+                      id: null
+                  );
+                },
+                validator: (value){
+                  // return null means no error
+                  if(value.isEmpty){
+                    return 'Please Provide a product price';
+                  }
+                  if(double.tryParse(value) == null){
+                    return 'Please Provide a valid price';
+                  }
+                  if(double.parse(value) <= 0){
+                    return 'Please Provide a price greater than 0';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -82,6 +155,25 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.next,
                 focusNode: _descriptionFocusNode,
+                onSaved: (value){
+                  _editedProduct = Product(
+                      title: _editedProduct.title,
+                      price:  _editedProduct.price,
+                      description: value,
+                      imageUrl: _editedProduct.imageUrl,
+                      id: null
+                  );
+                },
+                validator: (value){
+                  // return null means no error
+                  if(value.isEmpty){
+                    return 'Please Provide a product description';
+                  }
+                  if(value.length < 10){
+                    return 'At least 10 characters';
+                  }
+                  return null;
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -114,6 +206,31 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       textInputAction: TextInputAction.done,
                       controller: _imageUrlController,
                       focusNode: _imageUrlFocusNode,
+                      onFieldSubmitted: (_){
+                        _saveForm();
+                      },
+                      onSaved: (value){
+                        _editedProduct = Product(
+                            title: _editedProduct.title,
+                            price:  _editedProduct.price,
+                            description: _editedProduct.description,
+                            imageUrl: value,
+                            id: null
+                        );
+                      },
+                      validator: (value){
+                        // return null means no error
+                        if(value.isEmpty){
+                          return 'Please Provide a product inage URL';
+                        }
+                        if(!value.startsWith('http') || !value.startsWith('https')){
+                          return 'Please enter a valid url';
+                        }
+                        if(!value.endsWith('.jpeg') || !value.endsWith('.jpg') || !value.endsWith('.png')){
+                          return 'Please enter a valid url';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
