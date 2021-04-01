@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shopy/providers/Products.dart';
 import 'package:shopy/providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
@@ -43,10 +45,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void _updateImageUrl(){
   //  Check if there is focus on url formField
     if(!_imageUrlFocusNode.hasFocus){
-      if(_imageUrlController.text.isEmpty || !_imageUrlController.text.startsWith('http') || !_imageUrlController.text.startsWith('https')
-          || !_imageUrlController.text.endsWith('.jpeg') || !_imageUrlController.text.endsWith('.jpg') || !_imageUrlController.text.endsWith('.png')){
-        return;
-      }
+      // if(_imageUrlController.text.isEmpty || !_imageUrlController.text.startsWith('http') || !_imageUrlController.text.startsWith('https')
+      //     || !_imageUrlController.text.endsWith('.jpeg') || !_imageUrlController.text.endsWith('.jpg') || !_imageUrlController.text.endsWith('.png')){
+      //   return;
+      // }
       setState(() {
 
       });
@@ -59,10 +61,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
       return;
     }
     _form.currentState.save();
-    print(_editedProduct.title);
-    print(_editedProduct.price.toString());
-    print(_editedProduct.description);
-    print(_editedProduct.imageUrl);
+    // print(_editedProduct.title);
+    // print(_editedProduct.price.toString());
+    // print(_editedProduct.description);
+    // print(_editedProduct.imageUrl);
+    
+    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -221,13 +226,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       validator: (value){
                         // return null means no error
                         if(value.isEmpty){
-                          return 'Please Provide a product inage URL';
+                          return 'Please Provide a product image URL';
                         }
                         if(!value.startsWith('http') || !value.startsWith('https')){
                           return 'Please enter a valid url';
                         }
-                        if(!value.endsWith('.jpeg') || !value.endsWith('.jpg') || !value.endsWith('.png')){
-                          return 'Please enter a valid url';
+                        print(value.endsWith('.jpg'));
+                        if(!value.endsWith('.jpeg') && !value.endsWith('.jpg') && !value.endsWith('.png')){
+                          return 'Please enter a valid image';
                         }
                         return null;
                       },
