@@ -237,7 +237,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   ),
                   Expanded(
                     child: TextFormField(
-                      initialValue: _initValues['imageUrl'],
+                      // initialValue: _initValues['imageUrl'],
                       decoration: InputDecoration(
                         labelText: 'Image URL',
                       ),
