@@ -51,27 +51,32 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  void addProduct(Product product){
+  Future<void> addProduct(Product product){
 
     final url = Uri.https('iron-stack-263405.firebaseio.com', '/products.json');
-    http.post(url, body: json.encode({
+    //return Future to check if product is added to web server
+    // this will determine the value of _isLoading
+    return http.post(url, body: json.encode({
       'title': product.title,
       'description' : product.description,
       'price' : product.price,
       'imageUrl' : product.imageUrl,
       'isFavorite' : product.isFavorite
-    }),);
-
-    final newProduct = Product(
-      id: DateTime.now().toString(),
-      title: product.title,
-      price: product.price,
-      description: product.description,
-      imageUrl: product.imageUrl
-    );
-    // _items.add(newProduct);
-    _items.insert(0, newProduct);
-    notifyListeners();
+    }),).then((response){
+      final newProduct = Product(
+          // ****** save local  ******* //
+          // id: DateTime.now().toString(),
+          // ****** save on server  ******* //
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          price: product.price,
+          description: product.description,
+          imageUrl: product.imageUrl
+      );
+      // _items.add(newProduct);
+      _items.insert(0, newProduct);
+      notifyListeners();
+    });
   }
 
   void updateProduct(String id, Product newProduct){

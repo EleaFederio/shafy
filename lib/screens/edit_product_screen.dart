@@ -32,6 +32,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     'imageUrl': ''
   };
   var _isInit = true;
+  var _isLoading = false;
 
 
   @override
@@ -89,12 +90,27 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     _form.currentState.save();
     // check if product id to be edit or to be save
+    setState(() {
+      _isLoading = true;
+    });
     if(_editedProduct.id != null){
+      print('Enter If');
       Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
+      setState(() {
+        _isLoading = false;
+      });
+      print("if ${_isLoading}");
+      Navigator.of(context).pop();
     }else{
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+      print('Enter Else');
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct).then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+        print("else ${_isLoading}");
+        Navigator.of(context).pop();
+      });
     }
-    Navigator.of(context).pop();
   }
 
   @override
@@ -112,7 +128,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
           )
         ],
       ),
-      body: Padding(
+      body: _isLoading ? Center(
+        child: CircularProgressIndicator(),
+      ) : Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _form,
