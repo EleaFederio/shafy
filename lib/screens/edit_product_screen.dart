@@ -94,20 +94,39 @@ class _EditProductScreenState extends State<EditProductScreen> {
       _isLoading = true;
     });
     if(_editedProduct.id != null){
-      print('Enter If');
       Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
       setState(() {
         _isLoading = false;
       });
-      print("if ${_isLoading}");
       Navigator.of(context).pop();
     }else{
       print('Enter Else');
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct).then((_) {
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct)
+          .catchError((error){
+            print('Enter error ************* ${error} *******************');
+            return showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: Text('Error'),
+                  content: Text('Something went wrong'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('Okay'),
+                      onPressed: (){
+                        Navigator.of(ctx).pop();
+                        print('XXXXX Navigator XXXXX');
+                      },
+                    ),
+                  ],
+                ),
+            );
+            print('Exit Alert Dialog');
+          })
+          .then((_) {
+            print('Then A');
         setState(() {
           _isLoading = false;
         });
-        print("else ${_isLoading}");
         Navigator.of(context).pop();
       });
     }

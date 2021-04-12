@@ -53,7 +53,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product){
 
-    final url = Uri.https('iron-stack-263405.firebaseio.com', '/products.json');
+    final url = Uri.https('iron-stack-263405.firebaseio.cm', '/products.json');
     //return Future to check if product is added to web server
     // this will determine the value of _isLoading
     return http.post(url, body: json.encode({
@@ -73,9 +73,11 @@ class Products with ChangeNotifier {
           description: product.description,
           imageUrl: product.imageUrl
       );
-      // _items.add(newProduct);
-      _items.insert(0, newProduct);
+      _items.add(newProduct);
+      // _items.insert(0, newProduct);
       notifyListeners();
+    }).catchError((error){
+      throw error;
     });
   }
 
