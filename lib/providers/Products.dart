@@ -24,6 +24,9 @@ class Products with ChangeNotifier {
     try{
       final response = await http.get(Uri.https('iron-stack-263405.firebaseio.com', '/products.json'));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if(extractedData == null){
+        return;
+      }
       final List<Product> loadedProducts = [];
       extractedData.forEach((key, value) {
         loadedProducts.add(Product(
