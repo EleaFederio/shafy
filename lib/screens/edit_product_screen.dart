@@ -83,7 +83,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm(){
+  void _saveForm() async {
     final isValid = _form.currentState.validate();
     if(!isValid){
       return;
@@ -94,41 +94,36 @@ class _EditProductScreenState extends State<EditProductScreen> {
       _isLoading = true;
     });
     if(_editedProduct.id != null){
-      Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
+      await Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
       setState(() {
         _isLoading = false;
       });
       Navigator.of(context).pop();
     }else{
-      print('Enter Else');
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct)
-          .catchError((error){
-            print('Enter error ************* ${error} *******************');
-            return showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text('Error'),
-                  content: Text('Something went wrong'),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text('Okay'),
-                      onPressed: (){
-                        Navigator.of(ctx).pop();
-                        print('XXXXX Navigator XXXXX');
-                      },
-                    ),
-                  ],
-                ),
-            );
-            print('Exit Alert Dialog');
-          })
-          .then((_) {
-            print('Then A');
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
+      try{
+        await Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+      }catch(error){
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Something went wrong'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Okay'),
+                onPressed: (){
+                  Navigator.of(ctx).pop();
+                  print('XXXXX Navigator XXXXX');
+                },
+              ),
+            ],
+          ),
+        );
+      }
+      setState(() {
+        _isLoading = false;
       });
+      Navigator.of(context).pop();
     }
   }
 
