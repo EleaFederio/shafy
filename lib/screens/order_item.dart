@@ -66,6 +66,16 @@ class _OrderItemScreenState extends State<OrderItemScreen> {
               ).toList(),
             ),
           ),
+          FlatButton(
+            color: Theme.of(context).errorColor,
+            onPressed: (){},
+            child: Text(
+              'Cancel Order',
+              style: TextStyle(
+                color: Colors.white
+              ),
+            ),
+          )
         ],
       ),
     );
