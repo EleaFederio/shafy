@@ -4,6 +4,7 @@ import 'package:shopy/config/myColor.dart';
 import 'package:shopy/providers/Products.dart';
 import 'package:shopy/providers/cart.dart';
 import 'package:shopy/providers/orders.dart';
+import 'package:shopy/screens/auth_screen.dart';
 import 'package:shopy/screens/cart_screen.dart';
 import 'package:shopy/screens/edit_product_screen.dart';
 import 'package:shopy/screens/orders_screen.dart';
@@ -40,13 +41,15 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Lato',
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
-          home: ProductOverviewScreen(),
+          // home: ProductOverviewScreen(),
+          home: AuthScreen(),
           routes: {
             ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
             CartScreen.routeName: (context) => CartScreen(),
             OrdersScreen.routeName: (context) => OrdersScreen(),
             UserProductsScreen.routeName: (context) => UserProductsScreen(),
-            EditProductScreen.routeName: (context) => EditProductScreen()
+            EditProductScreen.routeName: (context) => EditProductScreen(),
+            AuthScreen.routeName: (context) => AuthScreen()
           },
         ),
     );
