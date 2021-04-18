@@ -27,7 +27,7 @@ class Orders with ChangeNotifier{
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url = Uri.https('iron-stack-263405.firebaseio.com', '/orders.json');
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/orders.json');
     final response = await http.get(url);
   //  ****************************************  //
     final List<OrderItem> loadedOrders = [];
@@ -55,7 +55,7 @@ class Orders with ChangeNotifier{
    }
 
   void addOrder(List<CartItem> cartProducts, double total) async {
-    final url = Uri.https('iron-stack-263405.firebaseio.com', '/orders.json');
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/orders.json');
     final timeStamp = DateTime.now();
     final response = await http.post(url, body: json.encode({
       'amount': total,

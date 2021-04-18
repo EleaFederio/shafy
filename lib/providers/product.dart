@@ -26,7 +26,7 @@ class Product with ChangeNotifier{
   }
 
   void toogleFavoriteStatus() async{
-    final url = Uri.https('iron-stack-263405.firebaseio.com', '/products/$id.json');
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products/$id.json');
 
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
