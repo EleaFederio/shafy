@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopy/models/http_exception.dart';
 import 'package:shopy/providers/auth.dart';
 
 enum AuthMode { Signup, Login }
@@ -102,6 +103,30 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
+  void _showErrorDialog(String message){
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'An Error Occurred!',
+          style: TextStyle(
+            color: Theme.of(context).errorColor
+          ),
+        ),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            color: Theme.of(context).accentColor,
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      )
+    );
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
       // Invalid!
@@ -111,18 +136,39 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.Login) {
-      // Log user in
-      await Provider.of<Auth>(context, listen: false).signin(
-          _authData['email'],
-          _authData['password']
-      );
-    } else {
-      // Sign user up
-      await Provider.of<Auth>(context, listen: false).signup(
-        _authData['email'],
-        _authData['password']
-      );
+    try{
+      if (_authMode == AuthMode.Login) {
+        // Log user in
+        await Provider.of<Auth>(context, listen: false).signin(
+            _authData['email'],
+            _authData['password']
+        );
+      } else {
+        // Sign user up
+        await Provider.of<Auth>(context, listen: false).signup(
+            _authData['email'],
+            _authData['password']
+        );
+      }
+    } on HttpException catch(error){
+      // Error Handling
+      var errorMessage = "Something went wrong!";
+      if(error.toString().contains('EMAIL_EXISTS')){
+        errorMessage = 'Email Already Exist!';
+      }else if(error.toString().contains('INVALID_EMAIL')){
+        errorMessage = 'Invalid Email';
+      }else if(error.toString().contains('WEAK_PASSWORD')){
+        errorMessage = 'This Password id to weak';
+      }else if(error.toString().contains('EMAIL_NOT_FOUND')){
+        errorMessage = 'Email not found!';
+      }else if(error.toString().contains('INVALID_PASSWORD')){
+        errorMessage = 'Invalid Password';
+      }
+      _showErrorDialog(errorMessage);
+      print(error);
+    }catch(error){
+      const errorMessage = "Please try Again";
+      _showErrorDialog(errorMessage);
     }
     setState(() {
       _isLoading = false;
