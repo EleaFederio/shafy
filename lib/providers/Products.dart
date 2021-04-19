@@ -19,10 +19,22 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
+  // ******************* for authentication *********************
+  final String authToken;
+
+  Products(this.authToken, this._items);
+
+  //*************************************************************
+
   Future<void> fetchAndSetProducts() async {
-    const url = "iron-stack-263405.firebaseio.com";
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products.json', {
+      'auth' : authToken,
+    });
+    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+    print(url);
+    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
     try{
-      final response = await http.get(Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products.json'));
+      final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if(extractedData == null){
         return;
@@ -46,8 +58,9 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product){
-
-    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products.json');
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products.json', {
+      'auth' : authToken,
+    });
     //return Future to check if product is added to web server
     // this will determine the value of _isLoading
     return http.post(url, body: json.encode({
@@ -78,7 +91,9 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if(prodIndex >= 0){
-      await http.patch(Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products/$id.json'), body: json.encode({
+      await http.patch(Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products/$id.json', {
+        'auth' : authToken,
+      }), body: json.encode({
         'title': newProduct.title,
         'description' : newProduct.description,
         'imageUrl' : newProduct.imageUrl,
@@ -93,7 +108,9 @@ class Products with ChangeNotifier {
   }
 
   Future <void> deleteProduct(String id) async{
-    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products/$id.json');
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products/$id', {
+      'auth' : authToken,
+    });
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
     // if delete fail product will revert/rollback

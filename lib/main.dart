@@ -10,6 +10,7 @@ import 'package:shopy/screens/cart_screen.dart';
 import 'package:shopy/screens/edit_product_screen.dart';
 import 'package:shopy/screens/orders_screen.dart';
 import 'package:shopy/screens/product_detail_screen.dart';
+import 'package:shopy/screens/product_overview_screen.dart';
 import 'package:shopy/screens/user_products_screen.dart';
 
 void main() {
@@ -26,36 +27,52 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => Auth(),
         ),
-        ChangeNotifierProvider(
-            create: (context) => Products(),
+        // ChangeNotifierProxyProvider will give the provider you set in the Multiprovider
+        // To make it Accessable to other models
+        ChangeNotifierProxyProvider<Auth, Products>(
+            // This Provider will rebuild
+            // This get the token value from token class providers/auth.dart
+            update: (context, auth, previousProducts) => Products(
+              auth.token,
+              previousProducts == null ? [] : previousProducts.items
+            ),
         ),
         ChangeNotifierProvider(
           create: (context) => Cart(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => Orders(),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          update: (ctx, auth, previousOrder) => Orders(
+            auth.token,
+            previousOrder == null ? [] : previousOrder.orders,
+          ),
         )
       ],
-      child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            primarySwatch: MaterialColor(0xFF3d3e3c, color),
-            accentColor: Color(0xFFcde6fd),
-            fontFamily: 'Lato',
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
-          // home: ProductOverviewScreen(),
-          home: AuthScreen(),
-          routes: {
-            ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
-            CartScreen.routeName: (context) => CartScreen(),
-            OrdersScreen.routeName: (context) => OrdersScreen(),
-            UserProductsScreen.routeName: (context) => UserProductsScreen(),
-            EditProductScreen.routeName: (context) => EditProductScreen(),
-            AuthScreen.routeName: (context) => AuthScreen()
-          },
-        ),
+
+      //  Wrap Material App to with Consumer to check where user is sign in or not
+      //  Depend on the auth data if what home parameter will receive in this Main Widget
+      child: Consumer<Auth>(
+        builder: (context, authData, _) =>
+            MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Flutter Demo',
+              theme: ThemeData(
+                primarySwatch: MaterialColor(0xFF3d3e3c, color),
+                accentColor: Color(0xFFcde6fd),
+                fontFamily: 'Lato',
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+              ),
+              // home: ProductOverviewScreen(),
+              home: authData.isAuth ? ProductOverviewScreen() : AuthScreen(),
+              routes: {
+                ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
+                CartScreen.routeName: (context) => CartScreen(),
+                OrdersScreen.routeName: (context) => OrdersScreen(),
+                UserProductsScreen.routeName: (context) => UserProductsScreen(),
+                EditProductScreen.routeName: (context) => EditProductScreen(),
+                AuthScreen.routeName: (context) => AuthScreen()
+              },
+            ),
+      )
     );
   }
 }

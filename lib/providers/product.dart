@@ -25,8 +25,8 @@ class Product with ChangeNotifier{
     notifyListeners();
   }
 
-  void toogleFavoriteStatus() async{
-    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products/$id.json');
+  void toogleFavoriteStatus(String authToken) async{
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products/$id.json?auth=$authToken');
 
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;

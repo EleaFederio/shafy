@@ -103,6 +103,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       try{
         await Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
       }catch(error){
+        print('XXXXX Navigator XXXXX');
+        print(error.toString());
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -113,7 +115,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 child: Text('Okay'),
                 onPressed: (){
                   Navigator.of(ctx).pop();
-                  print('XXXXX Navigator XXXXX');
                 },
               ),
             ],
