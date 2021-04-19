@@ -25,16 +25,16 @@ class Product with ChangeNotifier{
     notifyListeners();
   }
 
-  void toogleFavoriteStatus(String authToken) async{
-    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products/$id.json?auth=$authToken');
+  void toogleFavoriteStatus(String authToken, String userId) async{
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/userFavorites/$userId/$id.json', {
+      'auth' : authToken,
+    });
 
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
     try{
-      final response = await http.patch(url, body: json.encode({
-        'isFavorite' : isFavorite,
-      }));
+      final response = await http.put(url, body: json.encode(isFavorite));
       if(response.statusCode >= 400){
         _setFavValue(oldStatus);
       }

@@ -31,7 +31,9 @@ class Orders with ChangeNotifier{
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/orders.json?auth=$authToken');
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/orders.json', {
+      'auth' : authToken,
+    });
     final response = await http.get(url);
   //  ****************************************  //
     final List<OrderItem> loadedOrders = [];
@@ -61,7 +63,9 @@ class Orders with ChangeNotifier{
   void addOrder(List<CartItem> cartProducts, double total) async {
     print('+++++++++++++++++++++++++++++++++');
     print(authToken);
-    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/orders.json?auth=$authToken');
+    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/orders.json', {
+      'auth' : authToken,
+    });
     final timeStamp = DateTime.now();
     final response = await http.post(url, body: json.encode({
       'amount': total,

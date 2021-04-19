@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
             // This get the token value from token class providers/auth.dart
             update: (context, auth, previousProducts) => Products(
               auth.token,
+              auth.userId,
               previousProducts == null ? [] : previousProducts.items
             ),
         ),

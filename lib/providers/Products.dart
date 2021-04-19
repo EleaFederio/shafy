@@ -21,24 +21,28 @@ class Products with ChangeNotifier {
 
   // ******************* for authentication *********************
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   //*************************************************************
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products.json', {
+    var url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products.json', {
       'auth' : authToken,
     });
-    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-    print(url);
-    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
     try{
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if(extractedData == null){
         return;
       }
+      // url has been override
+      url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/userFavorites/$userId/.json', {
+        'auth' : authToken,
+      });
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProducts = [];
       extractedData.forEach((key, value) {
         loadedProducts.add(Product(
@@ -47,7 +51,8 @@ class Products with ChangeNotifier {
             description : value['description'],
             price : value['price'],
             imageUrl : value['imageUrl'],
-            isFavorite : value['isFavorite']
+            // ?? check if favoriteData[key] is null
+            isFavorite : favoriteData == null ? false : favoriteData[key] ?? false,
         ));
         _items = loadedProducts;
         notifyListeners();
@@ -67,8 +72,7 @@ class Products with ChangeNotifier {
       'title': product.title,
       'description' : product.description,
       'price' : product.price,
-      'imageUrl' : product.imageUrl,
-      'isFavorite' : product.isFavorite
+      'imageUrl' : product.imageUrl
     }),).then((response){
       final newProduct = Product(
           // ****** save local  ******* //
