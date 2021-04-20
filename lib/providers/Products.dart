@@ -27,10 +27,28 @@ class Products with ChangeNotifier {
 
   //*************************************************************
 
-  Future<void> fetchAndSetProducts() async {
-    var url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products.json', {
+
+  // square bracket means optional
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+
+    final filterString = filterByUser ? {
       'auth' : authToken,
+      // the value must be string wrapped with "
+      "orderBy" : "\"creatorId\"",
+      'equalTo' : "\"$userId\""
+    } : {
+      'auth' : authToken,
+    };
+
+    // **** to get products linked to user ****
+    // configure in firebase rules ("products" : {
+    //                                ".indexOn" : ["creatorId"]
+    //                                 }
+    //                              )
+    var url = Uri.https('shafy-dbe57-default-rtdb.firebaseio.com', '/products.json', {
+      ...filterString
     });
+    print(url);
     try{
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -58,6 +76,8 @@ class Products with ChangeNotifier {
         notifyListeners();
       });
     }catch(error){
+      print('XXXXXXXXXXXXXXXXXXXXXX');
+      print(error.toString());
       throw error;
     }
   }
@@ -72,7 +92,9 @@ class Products with ChangeNotifier {
       'title': product.title,
       'description' : product.description,
       'price' : product.price,
-      'imageUrl' : product.imageUrl
+      'imageUrl' : product.imageUrl,
+      // this a foreign key for relation to the user eho upload the product
+      'creatorId' : userId
     }),).then((response){
       final newProduct = Product(
           // ****** save local  ******* //
