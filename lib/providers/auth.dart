@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
@@ -9,6 +10,7 @@ class Auth with ChangeNotifier{
   String _token;
   DateTime _expiryDate;
   String _userId;
+  Timer _authTimer;
 
   // This will determine id the user is login or not
   // This method is called inside the main.dart to change the home parameter inside the MaterialApp in main.dart
@@ -48,6 +50,7 @@ class Auth with ChangeNotifier{
           seconds: int.parse(responseData['expiresIn']),
         ),
       );
+      _autoLogout();
       notifyListeners();
     }catch(error){
       throw error;
@@ -67,6 +70,21 @@ class Auth with ChangeNotifier{
     _token = null;
     _userId = null;
     _expiryDate = null;
+    if(_authTimer != null){
+      _authTimer.cancel();
+      _authTimer = null;
+    }
     notifyListeners();
+  }
+
+  void _autoLogout(){
+    // if there is a existing timer cancel it, before setting a new one
+    if(_authTimer != null){
+      _authTimer.cancel();
+    }
+    // calculate/convert _expiryDate to seconds
+    final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
+    // user will automatically logout when equal to expiry date
+    _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
   }
 }
