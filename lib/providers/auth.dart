@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopy/models/http_exception.dart';
 
 class Auth with ChangeNotifier{
@@ -52,6 +53,19 @@ class Auth with ChangeNotifier{
       );
       _autoLogout();
       notifyListeners();
+
+    //  save token to device
+    //  needs to be async
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode({
+        'token' : _token,
+        'userId' : _userId,
+        'expiryDate' : _expiryDate.toIso8601String()
+      });
+      prefs.setString('userData', userData );
+      print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+      print(json.decode(prefs.getString('userData')));
+      print('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
     }catch(error){
       throw error;
     }
@@ -64,6 +78,30 @@ class Auth with ChangeNotifier{
 
   Future<void> signin(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
+  }
+
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if(!prefs.containsKey('userData')){
+      return false;
+    }
+    // json.decode() to convert userData(String) to map
+    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
+    print('*************************************************************************');
+    print(expiryDate);
+    print('*************************************************************************');
+    if(expiryDate.isBefore(DateTime.now())){
+      return false;
+    }
+
+  //  initialize auth properties
+    _token = extractedUserData['token'];
+    _userId = extractedUserData['userId'];
+    _expiryDate = expiryDate;
+    notifyListeners();
+    _autoLogout();
+    return true;
   }
 
   void logout(){

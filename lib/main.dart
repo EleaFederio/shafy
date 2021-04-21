@@ -11,6 +11,7 @@ import 'package:shopy/screens/edit_product_screen.dart';
 import 'package:shopy/screens/orders_screen.dart';
 import 'package:shopy/screens/product_detail_screen.dart';
 import 'package:shopy/screens/product_overview_screen.dart';
+import 'package:shopy/screens/splash_screen.dart';
 import 'package:shopy/screens/user_products_screen.dart';
 
 void main() {
@@ -64,7 +65,13 @@ class MyApp extends StatelessWidget {
                 visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
               // home: ProductOverviewScreen(),
-              home: authData.isAuth ? ProductOverviewScreen() : AuthScreen(),
+              home: authData.isAuth ? ProductOverviewScreen() : FutureBuilder(
+                future: authData.tryAutoLogin(),
+                builder: (context, authResultSnapshot) => authResultSnapshot.connectionState == ConnectionState.waiting ?
+                SplashScreen()
+                :
+                AuthScreen(),
+              ),
               routes: {
                 ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
                 CartScreen.routeName: (context) => CartScreen(),
