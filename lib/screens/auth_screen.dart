@@ -220,12 +220,12 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
       setState(() {
         _authMode = AuthMode.Signup;
       });
-      _controller.forward();
+      // _controller.forward();
     } else {
       setState(() {
         _authMode = AuthMode.Login;
       });
-      _controller.reverse();
+      // _controller.reverse();
     }
   }
 
@@ -238,17 +238,15 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
       ),
       elevation: 8.0,
       // The Container will only animate
-      child: AnimatedBuilder(
-        animation: _heightAnimation,
-        builder: (context, ch) => Container(
-          // height: _authMode == AuthMode.Signup ? 320 : 260,
-          height: _heightAnimation.value.height,
-          constraints:
-          BoxConstraints(minHeight: _heightAnimation.value.height),
-          width: deviceSize.width * 0.75,
-          padding: EdgeInsets.all(16.0),
-          child: ch),
-        // The Form will not animate
+      child: AnimatedContainer(
+        curve: Curves.easeIn,
+        duration: Duration(milliseconds: 300),
+        height: _authMode == AuthMode.Signup ? 320 : 260,
+        // height: _heightAnimation.value.height,
+        constraints:
+        BoxConstraints(minHeight: _heightAnimation.value.height),
+        width: deviceSize.width * 0.75,
+        padding: EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
