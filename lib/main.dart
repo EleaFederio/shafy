@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopy/config/myColor.dart';
+import 'package:shopy/helpers/custom_routes.dart';
 import 'package:shopy/providers/Products.dart';
 import 'package:shopy/providers/auth.dart';
 import 'package:shopy/providers/cart.dart';
@@ -63,6 +64,11 @@ class MyApp extends StatelessWidget {
                 accentColor: Color(0xFFcde6fd),
                 fontFamily: 'Lato',
                 visualDensity: VisualDensity.adaptivePlatformDensity,
+                pageTransitionsTheme: PageTransitionsTheme(
+                  builders: {
+                    TargetPlatform.android: CustomPageTransitionBuilder(),
+                  }
+                )
               ),
               // home: ProductOverviewScreen(),
               home: authData.isAuth ? ProductOverviewScreen() : FutureBuilder(
